@@ -138,31 +138,33 @@ function renderGrid() {
 
   container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
+  // Compute cell size based on available space
   const wrapper = document.querySelector('.grid-wrapper');
   const maxW = wrapper.clientWidth - 40;
   const maxH = wrapper.clientHeight - 40;
   const cellSize = Math.min(90, Math.floor(Math.min(maxW / cols, maxH / rows)));
 
-  if (container.children.length !== rows * cols) {
-    container.innerHTML = '';
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.id = `cell_${r}_${c}`;
-        cell.style.width = cellSize + 'px';
-        cell.style.height = cellSize + 'px';
-        container.appendChild(cell);
-      }
+  // ✅ ALWAYS rebuild grid to avoid stale/missing cells
+  container.innerHTML = '';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.id = `cell_${r}_${c}`;
+      cell.style.width = cellSize + 'px';
+      cell.style.height = cellSize + 'px';
+      container.appendChild(cell);
     }
   }
 
+  // Update each cell content
   for (let r = rows - 1; r >= 0; r--) {
     for (let c = 0; c < cols; c++) {
       updateCell(r, c, cellSize);
     }
   }
 
+  // Update agent coordinate display
   const { r: ar, c: ac } = world.agentPos;
   document.getElementById('agentCoord').textContent = `(${ac + 1},${ar + 1})`;
 }
@@ -313,17 +315,15 @@ function escapeHtml(str) {
 
 // ─── INIT
 window.addEventListener('load', () => {
-  // Don't draw placeholder — just set grid dimensions visually
   const container = document.getElementById('wumpusGrid');
   const rows = parseInt(document.getElementById('rowsSlider').value);
   const cols = parseInt(document.getElementById('colsSlider').value);
   container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
-      cell.id = `cell_${r}_${c}`;   // ✅ Give proper IDs
+      cell.id = `cell_${r}_${c}`;
       cell.style.width = '80px';
       cell.style.height = '80px';
       cell.innerHTML = '<span class="cell-icon" style="font-size:1rem;color:var(--text3)">?</span>';
