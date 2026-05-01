@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wumpus Logic Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <div>
+          <h1>WUMPUS<span class="accent">AGENT</span></h1>
+          <p class="subtitle">Propositional Logic · Resolution Refutation · Knowledge Base</p>
+        </div>
+      </div>
+      <div class="status-bar">
+        <div class="status-item">
+          <span class="status-label">STATUS</span>
+          <span class="status-value" id="agentStatus">IDLE</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">EPISODE</span>
+          <span class="status-value" id="episodeCount">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: Controls -->
+    <aside class="panel control-panel">
+      <h2 class="panel-title"><span class="panel-icon">⚙</span> CONFIGURATION</h2>
+
+      <div class="form-group">
+        <label>GRID ROWS</label>
+        <div class="input-row">
+          <input type="range" id="rowsSlider" min="3" max="8" value="4" oninput="document.getElementById('rowsVal').textContent=this.value">
+          <span class="val-display" id="rowsVal">4</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>GRID COLUMNS</label>
+        <div class="input-row">
+          <input type="range" id="colsSlider" min="3" max="8" value="4" oninput="document.getElementById('colsVal').textContent=this.value">
+          <span class="val-display" id="colsVal">4</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>AGENT SPEED</label>
+        <div class="input-row">
+          <input type="range" id="speedSlider" min="1" max="5" value="3" oninput="document.getElementById('speedVal').textContent=['Slow','Slow','Medium','Fast','Turbo'][this.value-1]">
+          <span class="val-display" id="speedVal">Medium</span>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" id="startBtn" onclick="startSimulation()">
+          <span>▶</span> START
+        </button>
+        <button class="btn btn-secondary" id="stepBtn" onclick="stepSimulation()" disabled>
+          <span>⏭</span> STEP
+        </button>
+        <button class="btn btn-danger" id="resetBtn" onclick="resetSimulation()">
+          <span>↺</span> RESET
+        </button>
+      </div>
+
+      <div class="legend">
+        <h3>LEGEND</h3>
+        <div class="legend-item"><span class="legend-cell safe"></span> SAFE (proven)</div>
+        <div class="legend-item"><span class="legend-cell unknown"></span> UNKNOWN</div>
+        <div class="legend-item"><span class="legend-cell suspect"></span> SUSPECT</div>
+        <div class="legend-cell-row">
+          <div class="legend-item"><span class="legend-cell danger"></span> PIT / WUMPUS</div>
+        </div>
+        <div class="legend-item"><span class="legend-cell agent-cell"></span> AGENT</div>
+        <div class="legend-item"><span class="legend-cell visited-cell"></span> VISITED</div>
+      </div>
+
+      <div class="percept-display">
+        <h3>CURRENT PERCEPTS</h3>
+        <div id="perceptList" class="percept-list">
+          <span class="percept-none">— none —</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: Grid -->
+    <section class="panel grid-panel">
+      <div class="grid-header">
+        <h2 class="panel-title"><span class="panel-icon">◈</span> WORLD GRID</h2>
+        <div class="coord-display">Agent @ <span id="agentCoord">(1,1)</span></div>
+      </div>
+      <div class="grid-wrapper">
+        <div id="wumpusGrid" class="wumpus-grid"></div>
+      </div>
+      <div class="grid-footer">
+        <div class="footer-tag">KB CLAUSES: <span id="kbCount">0</span></div>
+        <div class="footer-tag">SAFE CELLS: <span id="safeCellCount">0</span></div>
+        <div class="footer-tag">VISITED: <span id="visitedCount">0</span></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Metrics & KB Log -->
+    <aside class="panel metrics-panel">
+      <h2 class="panel-title"><span class="panel-icon">◎</span> METRICS</h2>
+
+      <div class="metric-card">
+        <div class="metric-value" id="inferenceSteps">0</div>
+        <div class="metric-label">INFERENCE STEPS</div>
+        <div class="metric-bar"><div class="metric-fill" id="inferenceBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value" id="resolutionCalls">0</div>
+        <div class="metric-label">RESOLUTION CALLS</div>
+        <div class="metric-bar"><div class="metric-fill blue" id="resolutionBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value" id="movesCount">0</div>
+        <div class="metric-label">MOVES TAKEN</div>
+        <div class="metric-bar"><div class="metric-fill purple" id="movesBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value" id="goldFound">NO</div>
+        <div class="metric-label">GOLD STATUS</div>
+      </div>
+
+      <h2 class="panel-title" style="margin-top:1rem"><span class="panel-icon">📋</span> KB LOG</h2>
+      <div id="kbLog" class="kb-log">
+        <div class="log-placeholder">Awaiting agent start...</div>
+      </div>
+
+      <h2 class="panel-title" style="margin-top:1rem"><span class="panel-icon">🔍</span> RESOLUTION LOG</h2>
+      <div id="resLog" class="kb-log res-log">
+        <div class="log-placeholder">No resolutions yet...</div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="wumpus.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
