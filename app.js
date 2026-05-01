@@ -5,7 +5,7 @@ let episodeCount = 0;
 
 const SPEED_MAP = { 1: 1200, 2: 800, 3: 500, 4: 250, 5: 100 };
 
-// ─── INITIALIZATION ───────────────────────────────────────
+//  INITIALIZATION 
 function startSimulation() {
   const rows = parseInt(document.getElementById('rowsSlider').value);
   const cols = parseInt(document.getElementById('colsSlider').value);
@@ -130,7 +130,7 @@ function setStatus(txt) {
                    txt === 'RUNNING' ? '#00ff9d' : '#00d4ff';
 }
 
-// ─── GRID RENDERING ───────────────────────────────────────
+// GRID RENDERING
 function renderGrid() {
   if (!world) return;
   const container = document.getElementById('wumpusGrid');
@@ -222,7 +222,7 @@ function updateCell(r, c, cellSize) {
   `;
 }
 
-// ─── METRICS UPDATE ───────────────────────────────────────
+//  METRICS UPDATE 
 function updateMetrics() {
   if (!world) return;
   const kb = world.kb;
@@ -248,7 +248,7 @@ function updateMetrics() {
   }
 }
 
-// ─── PERCEPT DISPLAY ──────────────────────────────────────
+//  PERCEPT DISPLAY 
 function updatePercepts() {
   if (!world) return;
   const percepts = world.getCurrentPercepts();
@@ -264,7 +264,7 @@ function updatePercepts() {
   ).join('');
 }
 
-// ─── KB LOG RENDERING ─────────────────────────────────────
+//KB LOG RENDERING 
 function renderKBLog() {
   if (!world) return;
   const el = document.getElementById('kbLog');
@@ -311,18 +311,23 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;');
 }
 
-// ─── INIT ─────────────────────────────────────────────────
+// ─── INIT
 window.addEventListener('load', () => {
+  // Don't draw placeholder — just set grid dimensions visually
   const container = document.getElementById('wumpusGrid');
   const rows = parseInt(document.getElementById('rowsSlider').value);
   const cols = parseInt(document.getElementById('colsSlider').value);
   container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-  for (let i = 0; i < rows * cols; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.style.width = '80px';
-    cell.style.height = '80px';
-    cell.innerHTML = '<span class="cell-coord"></span><span class="cell-icon" style="font-size:1rem;color:var(--text3)">?</span>';
-    container.appendChild(cell);
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.id = `cell_${r}_${c}`;   // ✅ Give proper IDs
+      cell.style.width = '80px';
+      cell.style.height = '80px';
+      cell.innerHTML = '<span class="cell-icon" style="font-size:1rem;color:var(--text3)">?</span>';
+      container.appendChild(cell);
+    }
   }
 });

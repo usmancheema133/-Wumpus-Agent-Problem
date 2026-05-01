@@ -1,8 +1,6 @@
-/* =======================================================
-   wumpus.js — Knowledge Base, CNF, Resolution Engine
-   ======================================================= */
 
-// ─── KNOWLEDGE BASE ───────────────────────────────────────
+
+//  KNOWLEDGE BASE 
 class KnowledgeBase {
   constructor() {
     this.clauses = [];      // Array of sets (each set = a clause in CNF)
@@ -33,10 +31,6 @@ class KnowledgeBase {
     return false;
   }
 
-  // Tell a biconditional: B_{r,c} <=> (P_{r-1,c} v P_{r+1,c} v P_{r,c-1} v P_{r,c+1})
-  // Converted to CNF:
-  // (1) ~B v P_n1 v P_n2 v ... (if breeze then at least one neighbor is pit)
-  // (2) ~P_ni v B             (if pit in neighbor then breeze)
   tellBreezeRule(r, c, neighbors) {
     const B = `B_${r}_${c}`;
     const notB = `~B_${r}_${c}`;
@@ -67,9 +61,8 @@ class KnowledgeBase {
     }
   }
 
-  // ─── RESOLUTION REFUTATION ─────────────────────────────
-  // To prove α: add ~α to KB and resolve — if contradiction found, α is entailed
-  // Returns { entailed: bool, steps: number, log: string[] }
+  // RESOLUTION REFUTATION 
+ 
   ask(alpha) {
     this.resolutionCalls++;
     const queryLog = [];
@@ -127,7 +120,7 @@ class KnowledgeBase {
   }
 }
 
-// ─── RESOLUTION HELPER ────────────────────────────────────
+// ─── RESOLUTION HELPER 
 function resolve(c1, c2) {
   const resolvents = [];
   for (const lit of c1) {
@@ -156,7 +149,7 @@ function isTautology(clause) {
   return false;
 }
 
-// ─── WUMPUS WORLD ─────────────────────────────────────────
+// WUMPUS WORLD
 class WumpusWorld {
   constructor(rows, cols) {
     this.rows = rows;
@@ -258,8 +251,6 @@ class WumpusWorld {
     if (c < this.cols - 1) nbrs.push([r, c + 1]);
     return nbrs;
   }
-
-  // FIX: Separate init visit (no moves counter increment) vs normal visit
   _visitCellInit(r, c) {
     this.agentPos = { r, c };
     this.visited.add(`${r}_${c}`);

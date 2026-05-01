@@ -1,7 +1,3 @@
-/* =========================================
-   WUMPUS AGENT — CYBERPUNK TERMINAL THEME
-   ========================================= */
-
 :root {
   --bg:         #050a0f;
   --bg2:        #0b1520;
@@ -18,7 +14,7 @@
   --text2:      #6b8fa8;
   --text3:      #3d6080;
 
-  /* Cell colors */
+
   --cell-safe:     #003d1f;
   --cell-safe-b:   #00ff9d;
   --cell-unknown:  #0d1a27;
@@ -413,8 +409,9 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .cell.visited {
-  background: var(--cell-visited);
-  border-color: var(--cell-visited-b);
+  background: rgba(0, 180, 200, 0.15);
+  border-color: #00b4c8;
+  box-shadow: inset 0 0 8px rgba(0, 180, 200, 0.2);
 }
 
 .cell.agent-here {
@@ -568,9 +565,7 @@ input[type=range]::-webkit-slider-thumb {
 .log-entry .log-res { color: var(--accent3); }
 .log-placeholder { color: var(--text3); font-style: italic; }
 
-/* =====================
-   RESPONSIVE
-   ===================== */
+/*  RESPONSIVE */
 @media (max-width: 1200px) {
   main { grid-template-columns: 230px 1fr 250px; }
   .cell { width: 68px; height: 68px; }
