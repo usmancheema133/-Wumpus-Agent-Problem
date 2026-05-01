@@ -153,5 +153,18 @@
 
   <script src="wumpus.js"></script>
   <script src="app.js"></script>
+  <div id="gameOverlay" class="game-overlay" style="display: none;">
+  <div id="gamePopup" class="game-popup">
+    <h2 id="gameTitle"></h2>
+
+    <div class="game-summary">
+      <p>Inference Steps: <span id="sumInference"></span></p>
+      <p>Resolution Calls: <span id="sumResolution"></span></p>
+      <p>Moves Taken: <span id="sumMoves"></span></p>
+    </div>
+
+    <button onclick="closePopup()">Play Again</button>
+  </div>
+</div>
 </body>
 </html>

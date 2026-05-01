@@ -296,7 +296,11 @@ input[type=range]::-webkit-slider-thumb {
 .legend-cell.danger { background: var(--cell-danger); border-color: var(--cell-danger-b); }
 .legend-cell.suspect { background: var(--cell-suspect); border-color: var(--cell-suspect-b); }
 .legend-cell.agent-cell { background: var(--cell-agent); border-color: var(--cell-agent-b); }
-.legend-cell.visited-cell { background: var(--cell-visited); border-color: var(--cell-visited-b); }
+.legend-cell.visited-cell {
+  background: linear-gradient(135deg, #00f5d4, #0bbcd6);
+  border-color: #00ffe5;
+  box-shadow: 0 0 6px rgba(0, 255, 229, 0.6);
+}
 
 /* PERCEPT DISPLAY */
 .percept-display {
@@ -409,9 +413,25 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .cell.visited {
-  background: rgba(0, 180, 200, 0.15);
-  border-color: #00b4c8;
-  box-shadow: inset 0 0 8px rgba(0, 180, 200, 0.2);
+  background: linear-gradient(135deg, #00f5d4, #0bbcd6);
+  border-color: #00ffe5;
+  box-shadow: 
+    inset 0 0 12px rgba(0, 255, 229, 0.25),
+    0 0 10px rgba(0, 255, 229, 0.35);
+  animation: visitedGlow 2s ease-in-out infinite;
+}
+
+@keyframes visitedGlow {
+  0%, 100% {
+    box-shadow: 
+      inset 0 0 12px rgba(0, 255, 229, 0.25),
+      0 0 10px rgba(0, 255, 229, 0.35);
+  }
+  50% {
+    box-shadow: 
+      inset 0 0 18px rgba(0, 255, 229, 0.4),
+      0 0 18px rgba(0, 255, 229, 0.6);
+  }
 }
 
 .cell.agent-here {
@@ -574,4 +594,90 @@ input[type=range]::-webkit-slider-thumb {
 @media (max-width: 900px) {
   main { grid-template-columns: 1fr; }
   .cell { width: 60px; height: 60px; }
+}
+
+/* GAME OVER OVERLAY */
+.game-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 10, 20, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.4s ease;
+}
+
+/* POPUP BOX */
+.game-popup {
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 2rem;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+  animation: scaleIn 0.4s ease;
+}
+
+/* TITLE STATES */
+.game-popup.win h2 {
+  color: var(--accent2);
+  text-shadow: 0 0 10px var(--accent2);
+}
+
+.game-popup.lose h2 {
+  color: var(--accent3);
+  text-shadow: 0 0 10px var(--accent3);
+}
+
+.game-popup h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+/* SUMMARY */
+.game-summary {
+  margin-top: 1rem;
+  text-align: left;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text2);
+}
+
+.game-summary p {
+  margin: 0.3rem 0;
+}
+
+/* BUTTON */
+.game-popup button {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1.2rem;
+  background: var(--accent);
+  border: none;
+  color: black;
+  font-family: 'Orbitron', monospace;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: 0.2s;
+}
+
+.game-popup button:hover {
+  background: var(--accent2);
+  box-shadow: 0 0 12px var(--accent2);
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.cell.visited:hover {
+  transform: scale(1.05);
 }

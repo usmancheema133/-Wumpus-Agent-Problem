@@ -62,6 +62,7 @@ function stepSimulation() {
 }
 
 function resetSimulation() {
+  document.getElementById('gameOverlay').style.display = 'none';
   resetInterval();
   world = null;
   isRunning = false;
@@ -108,11 +109,15 @@ function endSimulation(reason) {
   document.getElementById('stepBtn').disabled = true;
 
   const messages = {
-    gold: '🏆 GOLD FOUND!',
-    dead: '💀 AGENT DIED',
-    stuck: '🔒 AGENT STUCK'
+    gold: '🎉 Congratulations! You found the gold!',
+    dead: '💀 Agent Died!',
+    stuck: '⚠️ Agent Stuck!'
   };
+
   setStatus(messages[reason] || 'DONE');
+
+  //  SHOW POPUP
+  showPopup(reason);
 }
 
 function resetInterval() {
@@ -331,3 +336,31 @@ window.addEventListener('load', () => {
     }
   }
 });
+
+function showPopup(reason) {
+  const overlay = document.getElementById('gameOverlay');
+  const title = document.getElementById('gameTitle');
+
+  // Set title
+  if (reason === 'gold') {
+    title.textContent = '🎉 Congratulations! You found the gold!';
+    title.style.color = '#00ff9d';
+  } else if (reason === 'dead') {
+    title.textContent = '💀 Agent Died!';
+    title.style.color = '#ff4d6d';
+  } else {
+    title.textContent = '⚠️ Agent Stuck!';
+    title.style.color = '#ffd700';
+  }
+
+  // Set summary
+  document.getElementById('sumInference').textContent = world.kb.inferenceSteps;
+  document.getElementById('sumResolution').textContent = world.kb.resolutionCalls;
+  document.getElementById('sumMoves').textContent = world.moves;
+
+  overlay.style.display = 'flex';
+}
+function closePopup() {
+  document.getElementById('gameOverlay').style.display = 'none';
+  resetSimulation();
+}
